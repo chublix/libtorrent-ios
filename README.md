@@ -1,6 +1,20 @@
-libtorrent-ios
-==============
+# libtorrent-ios
 
-libtorrent-0.16.16 for iOS 
+libtorrent-rasterbar-1.0.6 for iOS like Xcode project with boost dependies.
+For building library execute in terminal build.sh script, after building you can find buided universal binary (device and simulator) with bitcode support in output/Universal directory (same folder in which the script is).
 
-libtorrent для iOS. В качестве IDE использовался Qt Creator 3.1.1, как более удобная среда для написания библиотек(с моей точки зрения). Для сборки boost использовался готовый скрипт который можно взять здесь https://gist.github.com/rsobik/7513324 (спасибо rsobik). Библиотека проверена, торенты загружает. По всем вопросам можно писать сюда mr_che@ukr.net . Бинарники  можно взять здесь https://github.com/chublix/libtorrent-ios-builded (armv7).
+##### Additional params:
+- If you want library without bitcode support run build script with -b/--bitcode=NO|YES flag:
+    ```sh
+    sh build.sh -b=NO
+    ```
+  
+- If you want library only for specefied platform run build script with -p/--platform=all|device|simulator flag:
+    ```sh
+    sh build.sh -p=device
+    ```
+  
+- For cleaning buid directory run script with -c/--clean flag: 
+    ```sh
+    sh build.sh -c
+    ```

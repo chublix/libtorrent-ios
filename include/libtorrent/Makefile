@@ -76,9 +76,9 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin13.0.0
-host_triplet = armv7-apple-darwin
-target_triplet = armv7-apple-darwin
+build_triplet = x86_64-apple-darwin14.5.0
+host_triplet = x86_64-apple-darwin
+target_triplet = x86_64-apple-darwin
 subdir = include/libtorrent
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(am__nobase_include_HEADERS_DIST)
@@ -120,7 +120,8 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 am__nobase_include_HEADERS_DIST = address.hpp add_torrent_params.hpp \
-	alert.hpp alert_types.hpp alloca.hpp allocator.hpp assert.hpp \
+	alert.hpp alert_manager.hpp alert_dispatcher.hpp \
+	alert_types.hpp alloca.hpp allocator.hpp assert.hpp \
 	bandwidth_limit.hpp bandwidth_manager.hpp bandwidth_socket.hpp \
 	bandwidth_queue_entry.hpp bencode.hpp bitfield.hpp \
 	bloom_filter.hpp broadcast_socket.hpp bt_peer_connection.hpp \
@@ -128,25 +129,26 @@ am__nobase_include_HEADERS_DIST = address.hpp add_torrent_params.hpp \
 	connection_queue.hpp ConvertUTF.h copy_ptr.hpp \
 	create_torrent.hpp deadline_timer.hpp debug.hpp \
 	disk_buffer_holder.hpp disk_buffer_pool.hpp disk_io_thread.hpp \
-	entry.hpp enum_net.hpp error.hpp error_code.hpp \
-	escape_string.hpp extensions.hpp file.hpp file_pool.hpp \
-	file_storage.hpp fingerprint.hpp gzip.hpp hasher.hpp \
-	http_connection.hpp http_parser.hpp http_seed_connection.hpp \
-	http_stream.hpp http_tracker_connection.hpp i2p_stream.hpp \
-	identify_client.hpp instantiate_connection.hpp \
-	intrusive_ptr_base.hpp invariant_check.hpp io.hpp \
-	io_service.hpp io_service_fwd.hpp ip_filter.hpp lazy_entry.hpp \
-	lsd.hpp magnet_uri.hpp max.hpp natpmp.hpp packet_buffer.hpp \
-	parse_url.hpp pch.hpp pe_crypto.hpp peer_connection.hpp \
-	peer.hpp peer_id.hpp peer_info.hpp peer_request.hpp \
+	ed25519.hpp entry.hpp enum_net.hpp error.hpp error_code.hpp \
+	escape_string.hpp export.hpp extensions.hpp file.hpp \
+	file_pool.hpp file_storage.hpp fingerprint.hpp gzip.hpp \
+	hasher.hpp http_connection.hpp http_parser.hpp \
+	http_seed_connection.hpp http_stream.hpp \
+	http_tracker_connection.hpp i2p_stream.hpp identify_client.hpp \
+	instantiate_connection.hpp intrusive_ptr_base.hpp \
+	invariant_check.hpp io.hpp io_service.hpp io_service_fwd.hpp \
+	ip_filter.hpp ip_voter.hpp lazy_entry.hpp lsd.hpp \
+	magnet_uri.hpp max.hpp natpmp.hpp packet_buffer.hpp \
+	parse_url.hpp pe_crypto.hpp peer_connection.hpp peer.hpp \
+	peer_id.hpp peer_info.hpp peer_request.hpp \
 	piece_block_progress.hpp piece_picker.hpp policy.hpp \
-	proxy_base.hpp ptime.hpp puff.hpp random.hpp rsa.hpp rss.hpp \
+	proxy_base.hpp ptime.hpp puff.hpp random.hpp rss.hpp \
 	session.hpp session_settings.hpp session_status.hpp \
-	settings.hpp size_type.hpp sliding_average.hpp socket.hpp \
-	socket_io.hpp socket_type.hpp socket_type_fwd.hpp \
+	settings.hpp sha1_hash.hpp size_type.hpp sliding_average.hpp \
+	socket.hpp socket_io.hpp socket_type.hpp socket_type_fwd.hpp \
 	socks5_stream.hpp ssl_stream.hpp stat.hpp storage.hpp \
-	storage_defs.hpp string_util.hpp struct_debug.hpp thread.hpp \
-	time.hpp timestamp_history.hpp torrent_handle.hpp torrent.hpp \
+	storage_defs.hpp string_util.hpp thread.hpp time.hpp \
+	timestamp_history.hpp torrent_handle.hpp torrent.hpp \
 	torrent_info.hpp tracker_manager.hpp udp_socket.hpp \
 	udp_tracker_connection.hpp union_endpoint.hpp upnp.hpp \
 	utp_socket_manager.hpp utp_stream.hpp utf8.hpp version.hpp \
@@ -156,11 +158,13 @@ am__nobase_include_HEADERS_DIST = address.hpp add_torrent_params.hpp \
 	extensions/lt_trackers.hpp extensions/metadata_transfer.hpp \
 	extensions/smart_ban.hpp extensions/ut_metadata.hpp \
 	extensions/ut_pex.hpp kademlia/dht_tracker.hpp \
-	kademlia/find_data.hpp kademlia/logging.hpp kademlia/msg.hpp \
-	kademlia/node.hpp kademlia/node_entry.hpp kademlia/node_id.hpp \
+	kademlia/dht_observer.hpp kademlia/find_data.hpp \
+	kademlia/logging.hpp kademlia/msg.hpp kademlia/node.hpp \
+	kademlia/node_entry.hpp kademlia/node_id.hpp \
 	kademlia/observer.hpp kademlia/refresh.hpp \
 	kademlia/routing_table.hpp kademlia/rpc_manager.hpp \
-	kademlia/traversal_algorithm.hpp
+	kademlia/traversal_algorithm.hpp kademlia/item.hpp \
+	kademlia/get_item.hpp kademlia/get_peers.hpp
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -210,31 +214,31 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios/build-aux/missing aclocal-1.14
+ACLOCAL = ${SHELL} /Users/chublix/libtorrent-rasterbar-1.0.6/build-aux/missing aclocal-1.14
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
-AR = ar
-AUTOCONF = ${SHELL} /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios/build-aux/missing autoconf
-AUTOHEADER = ${SHELL} /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios/build-aux/missing autoheader
-AUTOMAKE = ${SHELL} /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios/build-aux/missing automake-1.14
-AWK = awk
-BOOST_CPPFLAGS = -I/Users/chublix/Documents/HLTS/third-party/boost/ios/prefix/include
-BOOST_LDFLAGS = -L/Users/chublix/Documents/HLTS/third-party/boost/ios/prefix/lib
+AR = /Applications/Xcode-6.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar
+AUTOCONF = ${SHELL} /Users/chublix/libtorrent-rasterbar-1.0.6/build-aux/missing autoconf
+AUTOHEADER = ${SHELL} /Users/chublix/libtorrent-rasterbar-1.0.6/build-aux/missing autoheader
+AUTOMAKE = ${SHELL} /Users/chublix/libtorrent-rasterbar-1.0.6/build-aux/missing automake-1.14
+AWK = gawk
+BOOST_CPPFLAGS = -I/Users/chublix/Documents/Boost/boost/include
+BOOST_LDFLAGS = -L/Users/chublix/Documents/Boost/boost/lib
 BOOST_PYTHON_LIB = 
 BOOST_SYSTEM_LIB = -lboost_system
-CC = clang
-CCDEPMODE = depmode=none
-CFLAGS = -D_THREAD_SAFE  -g -O2 -fvisibility=hidden
-COMPILETIME_OPTIONS =  -DTORRENT_DISABLE_ENCRYPTION  -DTORRENT_DISABLE_GEO_IP  -DBOOST_ASIO_HASH_MAP_BUCKETS=1021  -DBOOST_EXCEPTION_DISABLE  -DBOOST_ASIO_ENABLE_CANCELIO  -DBOOST_ASIO_DYN_LINK
-CPP = clang -E
-CPPFLAGS = -I/Users/chublix/Documents/HLTS/third-party/boost/ios/prefix/include 
+CC = /Applications/Xcode-6.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
+CCDEPMODE = depmode=gcc3
+CFLAGS = -D_THREAD_SAFE  -arch x86_64 -isysroot /Applications/Xcode-6.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk -miphoneos-version-min=8.4 -fvisibility=hidden
+COMPILETIME_OPTIONS =  -DTORRENT_DISABLE_ENCRYPTION  -DWITH_SHIPPED_GEOIP_H  -DBOOST_ASIO_HASH_MAP_BUCKETS=1021  -DBOOST_EXCEPTION_DISABLE  -DBOOST_ASIO_ENABLE_CANCELIO  -DBOOST_ASIO_DYN_LINK
+CPP = /Applications/Xcode-6.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -E
+CPPFLAGS = -I/Users/chublix/Documents/Boost/boost/include -arch x86_64  -isysroot /Applications/Xcode-6.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk -miphoneos-version-min=8.4
 CXX = g++
 CXXCPP = g++ -E
-CXXDEPMODE = depmode=none
-CXXFLAGS = -g -O2 -ftemplate-depth=120 -fvisibility-inlines-hidden
+CXXDEPMODE = depmode=gcc3
+CXXFLAGS = -Os -ftemplate-depth=120 -fvisibility=hidden -fvisibility-inlines-hidden
 CYGPATH_W = echo
 DEBUGFLAGS = -Os
-DEFS = -DPACKAGE_NAME=\"libtorrent-rasterbar\" -DPACKAGE_TARNAME=\"libtorrent-rasterbar\" -DPACKAGE_VERSION=\"0.16.16\" -DPACKAGE_STRING=\"libtorrent-rasterbar\ 0.16.16\" -DPACKAGE_BUGREPORT=\"arvid@rasterbar.com\" -DPACKAGE_URL=\"http://www.libtorrent.org\" -DPACKAGE=\"libtorrent-rasterbar\" -DVERSION=\"0.16.16\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DHAVE_PTHREAD=1 -DHAVE_BOOST=/\*\*/ -DHAVE_BOOST_SYSTEM=1 -DHAVE_GETHOSTBYNAME=1 -DNDEBUG=1 -DTORRENT_DISABLE_ENCRYPTION=1 -DTORRENT_DISABLE_GEO_IP=1 -DBOOST_ASIO_HASH_MAP_BUCKETS=1021 -DBOOST_EXCEPTION_DISABLE=1 -DBOOST_ASIO_ENABLE_CANCELIO=1 -DBOOST_ASIO_DYN_LINK=1
+DEFS = -DPACKAGE_NAME=\"libtorrent-rasterbar\" -DPACKAGE_TARNAME=\"libtorrent-rasterbar\" -DPACKAGE_VERSION=\"1.0.6\" -DPACKAGE_STRING=\"libtorrent-rasterbar\ 1.0.6\" -DPACKAGE_BUGREPORT=\"arvid@libtorrent.org\" -DPACKAGE_URL=\"http://www.libtorrent.org\" -DPACKAGE=\"libtorrent-rasterbar\" -DVERSION=\"1.0.6\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DHAVE_PTHREAD=1 -DHAVE_BOOST=/\*\*/ -DHAVE_BOOST_SYSTEM=1 -DHAVE_GETHOSTBYNAME=1 -DNDEBUG=1 -DTORRENT_DISABLE_ENCRYPTION=1 -DWITH_SHIPPED_GEOIP_H=1 -DBOOST_ASIO_HASH_MAP_BUCKETS=1021 -DBOOST_EXCEPTION_DISABLE=1 -DBOOST_ASIO_ENABLE_CANCELIO=1 -DBOOST_ASIO_DYN_LINK=1
 DEPDIR = .deps
 DLLTOOL = false
 DSYMUTIL = dsymutil
@@ -254,9 +258,9 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-INTERFACE_VERSION_INFO = 7:0:0
-LD = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
-LDFLAGS = -L/Users/chublix/Documents/HLTS/third-party/boost/ios/prefix/lib 
+INTERFACE_VERSION_INFO = 8:0:0
+LD = /Applications/Xcode-6.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
+LDFLAGS = -L/Users/chublix/Documents/Boost/boost/lib -arch x86_64 -isysroot /Applications/Xcode-6.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.4.sdk -fvisibility=hidden -fvisibility-inlines-hidden
 LIBICONV = -liconv
 LIBOBJS = 
 LIBS =  
@@ -265,7 +269,7 @@ LIPO = lipo
 LN_S = ln -s
 LTLIBICONV = -liconv
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios/build-aux/missing makeinfo
+MAKEINFO = ${SHELL} /Users/chublix/libtorrent-rasterbar-1.0.6/build-aux/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = ../../build-aux/install-sh -c -d
 NM = nm
@@ -278,21 +282,20 @@ OPENSSL_LIBS =
 OTOOL = otool
 OTOOL64 = :
 PACKAGE = libtorrent-rasterbar
-PACKAGE_BUGREPORT = arvid@rasterbar.com
+PACKAGE_BUGREPORT = arvid@libtorrent.org
 PACKAGE_NAME = libtorrent-rasterbar
-PACKAGE_STRING = libtorrent-rasterbar 0.16.16
+PACKAGE_STRING = libtorrent-rasterbar 1.0.6
 PACKAGE_TARNAME = libtorrent-rasterbar
 PACKAGE_URL = http://www.libtorrent.org
-PACKAGE_VERSION = 0.16.16
+PACKAGE_VERSION = 1.0.6
 PATH_SEPARATOR = :
-PKG_CONFIG = /usr/local/bin/pkg-config
-PTHREAD_CC = clang
+PKG_CONFIG = /opt/local/bin/pkg-config
+PTHREAD_CC = /Applications/Xcode-6.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 PTHREAD_CFLAGS = -D_THREAD_SAFE 
 PTHREAD_LIBS = 
 PYTHON = 
 PYTHON_CPPFLAGS = 
 PYTHON_EXEC_PREFIX = 
-PYTHON_EXTRA_LDFLAGS = 
 PYTHON_EXTRA_LIBS = 
 PYTHON_INSTALL_PARAMS = --prefix=$(DESTDIR)$(prefix)
 PYTHON_LDFLAGS = 
@@ -300,17 +303,17 @@ PYTHON_PLATFORM =
 PYTHON_PREFIX = 
 PYTHON_SITE_PKG = 
 PYTHON_VERSION = 
-RANLIB = ranlib
+RANLIB = /Applications/Xcode-6.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 0.16.16
-abs_builddir = /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios/include/libtorrent
-abs_srcdir = /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios/include/libtorrent
-abs_top_builddir = /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios
-abs_top_srcdir = /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios
-ac_ct_AR = ar
+VERSION = 1.0.6
+abs_builddir = /Users/chublix/libtorrent-rasterbar-1.0.6/include/libtorrent
+abs_srcdir = /Users/chublix/libtorrent-rasterbar-1.0.6/include/libtorrent
+abs_top_builddir = /Users/chublix/libtorrent-rasterbar-1.0.6
+abs_top_srcdir = /Users/chublix/libtorrent-rasterbar-1.0.6
+ac_ct_AR = 
 ac_ct_CC = 
 ac_ct_CXX = g++
 ac_ct_DUMPBIN = link -dump
@@ -321,10 +324,10 @@ am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
 ax_pthread_config = 
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin13.0.0
+build = x86_64-apple-darwin14.5.0
 build_alias = 
 build_cpu = x86_64
-build_os = darwin13.0.0
+build_os = darwin14.5.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -332,15 +335,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = armv7-apple-darwin
-host_alias = armv7-apple-darwin
-host_cpu = armv7
+host = x86_64-apple-darwin
+host_alias = x86_64-apple-darwin
+host_cpu = x86_64
 host_os = darwin
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include/libtorrent
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Users/chublix/Documents/HLTS/libtorrent-rasterbar-0.16.16-ios/build-aux/install-sh
+install_sh = ${SHELL} /Users/chublix/libtorrent-rasterbar-1.0.6/build-aux/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -351,8 +354,8 @@ oldincludedir = /usr/include
 pdfdir = ${docdir}
 pkgpyexecdir = 
 pkgpythondir = 
-prefix = /Users/chublix/Documents/HLTS/third-party/libtorrent
-program_transform_name = s&^&armv7-apple-darwin-&
+prefix = /Users/chublix/libtorrent-rasterbar-1.0.6/output/x86_64
+program_transform_name = s,x,x,
 psdir = ${docdir}
 pyexecdir = 
 pythondir = 
@@ -360,19 +363,21 @@ sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
 srcdir = .
 sysconfdir = ${prefix}/etc
-target = armv7-apple-darwin
-target_alias = armv7-apple-darwin
-target_cpu = armv7
+target = x86_64-apple-darwin
+target_alias = 
+target_cpu = x86_64
 target_os = darwin
 target_vendor = apple
 top_build_prefix = ../../
 top_builddir = ../..
 top_srcdir = ../..
-#GEOIP_H = GeoIP.h
+GEOIP_H = GeoIP.h
 nobase_include_HEADERS = \
   address.hpp                  \
   add_torrent_params.hpp       \
   alert.hpp                    \
+  alert_manager.hpp            \
+  alert_dispatcher.hpp         \
   alert_types.hpp              \
   alloca.hpp                   \
   allocator.hpp                \
@@ -399,11 +404,13 @@ nobase_include_HEADERS = \
   disk_buffer_holder.hpp       \
   disk_buffer_pool.hpp         \
   disk_io_thread.hpp           \
+  ed25519.hpp                  \
   entry.hpp                    \
   enum_net.hpp                 \
   error.hpp                    \
   error_code.hpp               \
   escape_string.hpp            \
+  export.hpp                   \
   extensions.hpp               \
   file.hpp                     \
   file_pool.hpp                \
@@ -425,6 +432,7 @@ nobase_include_HEADERS = \
   io_service.hpp               \
   io_service_fwd.hpp           \
   ip_filter.hpp                \
+  ip_voter.hpp                 \
   lazy_entry.hpp               \
   lsd.hpp                      \
   magnet_uri.hpp               \
@@ -432,7 +440,6 @@ nobase_include_HEADERS = \
   natpmp.hpp                   \
   packet_buffer.hpp            \
   parse_url.hpp                \
-  pch.hpp                      \
   pe_crypto.hpp                \
   peer_connection.hpp          \
   peer.hpp                     \
@@ -446,12 +453,12 @@ nobase_include_HEADERS = \
   ptime.hpp                    \
   puff.hpp                     \
   random.hpp                   \
-  rsa.hpp                      \
   rss.hpp                      \
   session.hpp                  \
   session_settings.hpp         \
   session_status.hpp           \
   settings.hpp                 \
+  sha1_hash.hpp                \
   size_type.hpp                \
   sliding_average.hpp          \
   socket.hpp                   \
@@ -464,7 +471,6 @@ nobase_include_HEADERS = \
   storage.hpp                  \
   storage_defs.hpp             \
   string_util.hpp              \
-  struct_debug.hpp             \
   thread.hpp                   \
   time.hpp                     \
   timestamp_history.hpp        \
@@ -499,6 +505,7 @@ nobase_include_HEADERS = \
   extensions/ut_pex.hpp             \
   \
   kademlia/dht_tracker.hpp          \
+  kademlia/dht_observer.hpp         \
   kademlia/find_data.hpp            \
   kademlia/logging.hpp              \
   kademlia/msg.hpp                  \
@@ -509,7 +516,10 @@ nobase_include_HEADERS = \
   kademlia/refresh.hpp              \
   kademlia/routing_table.hpp        \
   kademlia/rpc_manager.hpp          \
-  kademlia/traversal_algorithm.hpp
+  kademlia/traversal_algorithm.hpp  \
+  kademlia/item.hpp                 \
+  kademlia/get_item.hpp             \
+  kademlia/get_peers.hpp
 
 all: all-am
 
