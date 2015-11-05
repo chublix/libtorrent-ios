@@ -31,7 +31,7 @@ buildIt()
 
   xcodebuild -workspace Libtorrent-rasterbar.xcworkspace ONLY_ACTIVE_ARCH=NO VALID_ARCHS='armv7 armv7s arm64 i386 x86_64' \
     SYMROOT="$pwd/output" -configuration Release ENABLE_BITCODE=$usingBitcode \
-    ARCHS="$archs" -sdk "$fullPlatform" OTHER_CFLAGS="$otherFlags" -scheme boost_system clean build
+    ARCHS="$archs" -sdk "$fullPlatform" OTHER_CFLAGS="$otherFlags" -scheme torrent clean build
 }
 
 buildForAllPlatform()
@@ -42,8 +42,8 @@ buildForAllPlatform()
   mkdir -p $pwd/output/Universal
 
   LIPO -create $pwd/output/Release-iphoneos/libboost_system.a $pwd/output/Release-iphonesimulator/libboost_system.a -output $pwd/output/Universal/libboost_system.a
-  #LIPO -create $pwd/output/Release-iphoneos/libboost_filesystem.a $pwd/output/Release-iphonesimulator/libboost_filesystem.a -output $pwd/output/Universal/libboost_filesystem.a
-  #LIPO -create $pwd/output/Release-iphoneos/libtorrent.a $pwd/output/Release-iphonesimulator/libtorrent.a -output $pwd/output/Universal/libtorrent.a
+  LIPO -create $pwd/output/Release-iphoneos/libboost_filesystem.a $pwd/output/Release-iphonesimulator/libboost_filesystem.a -output $pwd/output/Universal/libboost_filesystem.a
+  LIPO -create $pwd/output/Release-iphoneos/libtorrent.a $pwd/output/Release-iphonesimulator/libtorrent.a -output $pwd/output/Universal/libtorrent.a
 }
 
 findLatestSDKVersion
