@@ -5,11 +5,11 @@ LIPO=$(xcrun -sdk iphoneos -find lipo)
 
 buildPlatform="all"
 usingBitcode="YES"
+cleanOutput="NO"
 
 findLatestSDKVersion()
 {
-  deviceSDKVersion=`xcrun --sdk iphoneos --show-sdk-version`
-  simulatorSDKVersion=`xcrun --sdk iphonesimulator --show-sdk-version`
+  SDKVERSION=`xcrun --sdk iphoneos --show-sdk-version`
 }
 
 buildIt()
@@ -18,20 +18,22 @@ buildIt()
 
   if [[ $platform == "iphoneos" ]]; then
     archs='armv7 armv7s arm64'
-    fullPlatform=$platform$deviceSDKVersion
   else
     archs='i386 x86_64'
-    fullPlatform=$platform$simulatorSDKVersion
   fi
 
-  otherFlags=''
-  if [[ $usingBitcode == "YES" ]]; then
-    otherFlags='-fembed-bitcode-marker'
+  #otherFlags=''
+  if [[ $SDKVERSION < 9.0  ]]; then
+    usingBitcode == "NO"
+  else
+    if [[ $usingBitcode == "YES" ]]; then
+      otherFlags='-fembed-bitcode'
+    fi
   fi
 
   xcodebuild -workspace Libtorrent-rasterbar.xcworkspace ONLY_ACTIVE_ARCH=NO VALID_ARCHS='armv7 armv7s arm64 i386 x86_64' \
     SYMROOT="$pwd/output" -configuration Release ENABLE_BITCODE=$usingBitcode \
-    ARCHS="$archs" -sdk "$fullPlatform" OTHER_CFLAGS="$otherFlags" -scheme torrent clean build
+    ARCHS="$archs" -sdk "$platform$SDKVERSION" OTHER_CFLAGS="$otherFlags" -scheme torrent clean build | egrep '^(/.+:[0-9+:[0-9]+:.(error|warning):|fatal|===)'
 }
 
 buildForAllPlatform()
@@ -59,8 +61,8 @@ do
     usingBitcode="${i#*=}"
     shift
     ;;
-    -c=*|--clean=*)
-    clean="YES"
+    -c|--clean)
+    cleanOutput="YES"
     shift
     ;;
     *)
@@ -69,7 +71,7 @@ do
   esac
 done
 
-if [[ -n $clean ]]; then
+if [[ $cleanOutput == "NO" ]]; then
   if [[ usingBitcode -ne "YES" && usingBitcode -ne "NO" ]]; then
     usingBitcode="YES"
   fi
@@ -88,4 +90,5 @@ if [[ -n $clean ]]; then
   fi
 else
   `rm -rf $pwd/output`
+  echo "Output folder cleaned!"
 fi

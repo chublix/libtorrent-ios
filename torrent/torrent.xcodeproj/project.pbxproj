@@ -290,6 +290,7 @@
 			isa = PBXGroup;
 			children = (
 				577CF15F1BEA124B00AA21D6 /* ed25519 */,
+				577CF1841BEA124B00AA21D6 /* kademlia */,
 				577CF14D1BEA124B00AA21D6 /* alert.cpp */,
 				577CF14E1BEA124B00AA21D6 /* alert_manager.cpp */,
 				577CF14F1BEA124B00AA21D6 /* allocator.cpp */,
@@ -328,7 +329,6 @@
 				577CF1811BEA124B00AA21D6 /* instantiate_connection.cpp */,
 				577CF1821BEA124B00AA21D6 /* ip_filter.cpp */,
 				577CF1831BEA124B00AA21D6 /* ip_voter.cpp */,
-				577CF1841BEA124B00AA21D6 /* kademlia */,
 				577CF1931BEA124B00AA21D6 /* lazy_bdecode.cpp */,
 				577CF1941BEA124B00AA21D6 /* logger.cpp */,
 				577CF1951BEA124B00AA21D6 /* lsd.cpp */,
@@ -691,7 +691,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = ../include;
-				OTHER_CFLAGS = (
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
 					"-DBOOST_ASIO_ENABLE_CANCELIO",
 					"-DBOOST_ASIO_HASH_MAP_BUCKETS=1021",
 					"-DBOOST_FILESYSTEM_VERSION=3",
@@ -711,7 +713,9 @@
 			buildSettings = {
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				HEADER_SEARCH_PATHS = ../include;
-				OTHER_CFLAGS = (
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
 					"-DBOOST_ASIO_ENABLE_CANCELIO",
 					"-DBOOST_ASIO_HASH_MAP_BUCKETS=1021",
 					"-DBOOST_FILESYSTEM_VERSION=3",
