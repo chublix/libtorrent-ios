@@ -12,34 +12,30 @@ findLatestSDKVersion()
   SDKVERSION=`xcrun --sdk iphoneos --show-sdk-version`
 }
 
-buildIt()
+xcodeBuild()
 {
-  platform=$1
+  if [[ $SDKVERSION < 9.0  ]]; then
+    usingBitcode == "NO"
+  fi
 
-  if [[ $platform == "iphoneos" ]]; then
+  if [[ $1 == "iphoneos" ]]; then
     archs='armv7 armv7s arm64'
   else
     archs='i386 x86_64'
   fi
 
-  #otherFlags=''
-  if [[ $SDKVERSION < 9.0  ]]; then
-    usingBitcode == "NO"
+  if [[ $usingBitcode == "YES" ]]; then
+    xcodebuild -workspace Libtorrent-rasterbar.xcworkspace ONLY_ACTIVE_ARCH=NO VALID_ARCHS="$archs" SYMROOT="$pwd/output" -configuration Release ENABLE_BITCODE="$usingBitcode" ARCHS="$archs" OTHER_CFLAGS="-fembed-bitcode" -sdk "$1$SDKVERSION" -scheme torrent clean build
   else
-    if [[ $usingBitcode == "YES" ]]; then
-      otherFlags='-fembed-bitcode'
-    fi
+    xcodebuild -workspace Libtorrent-rasterbar.xcworkspace ONLY_ACTIVE_ARCH=NO VALID_ARCHS="$archs" SYMROOT="$pwd/output" -configuration Release ENABLE_BITCODE="$usingBitcode" ARCHS="$archs" -sdk "$1$SDKVERSION" -scheme torrent clean build
   fi
 
-  xcodebuild -workspace Libtorrent-rasterbar.xcworkspace ONLY_ACTIVE_ARCH=NO VALID_ARCHS='armv7 armv7s arm64 i386 x86_64' \
-    SYMROOT="$pwd/output" -configuration Release ENABLE_BITCODE=$usingBitcode \
-    ARCHS="$archs" -sdk "$platform$SDKVERSION" OTHER_CFLAGS="$otherFlags" -scheme torrent clean build | egrep '^(/.+:[0-9+:[0-9]+:.(error|warning):|fatal|===)'
 }
 
 buildForAllPlatform()
 {
-  buildIt iphoneos
-  buildIt iphonesimulator
+  xcodeBuild iphoneos
+  xcodeBuild iphonesimulator
 
   mkdir -p $pwd/output/Universal
 
@@ -82,9 +78,9 @@ if [[ $cleanOutput == "NO" ]]; then
   if [[ $buildPlatform == "all" ]]; then
     buildForAllPlatform
   elif [[ $buildPlatform == "device" ]]; then
-    buildIt iphoneos
+    xcodeBuild iphoneos
   elif [[ $buildPlatform == "simulator" ]]; then
-    buildIt iphonesimulator
+    xcodeBuild iphonesimulator
   else
     buildForAllPlatform
   fi
