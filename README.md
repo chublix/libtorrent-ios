@@ -1,6 +1,6 @@
 # libtorrent-ios
 
-libtorrent-rasterbar-1.0.6 for iOS like Xcode project with boost dependies.
+libtorrent-rasterbar-1.1.4 for iOS like Xcode project with boost(1.64.0) dependies.
 For building library execute in terminal build.sh script, after building you can find buided universal binary (device and simulator) with bitcode support in output/Universal directory (same folder in which the script is).
 
 ##### Additional params:
