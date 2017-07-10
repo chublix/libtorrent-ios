@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2007-2014, Arvid Norberg
+Copyright (c) 2007-2016, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,12 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef TORRENT_BANDWIDTH_CHANNEL_HPP_INCLUDED
 #define TORRENT_BANDWIDTH_CHANNEL_HPP_INCLUDED
 
+#include "libtorrent/aux_/disable_warnings_push.hpp"
+
 #include <boost/integer_traits.hpp>
 #include <boost/cstdint.hpp>
+
+#include "libtorrent/aux_/disable_warnings_pop.hpp"
 
 #include "libtorrent/assert.hpp"
 

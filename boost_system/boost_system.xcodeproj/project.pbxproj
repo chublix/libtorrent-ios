@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		577CF23F1BEA129500AA21D6 /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 577CF23E1BEA129500AA21D6 /* error_code.cpp */; };
+		570B826D1F1376CB006DE204 /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 570B826C1F1376CB006DE204 /* error_code.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +23,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		570B826C1F1376CB006DE204 /* error_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error_code.cpp; sourceTree = "<group>"; };
 		577CF1161BEA114900AA21D6 /* libboost_system.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libboost_system.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		577CF23E1BEA129500AA21D6 /* error_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error_code.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,7 +65,7 @@
 		577CF23D1BEA129500AA21D6 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				577CF23E1BEA129500AA21D6 /* error_code.cpp */,
+				570B826C1F1376CB006DE204 /* error_code.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -126,7 +126,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				577CF23F1BEA129500AA21D6 /* error_code.cpp in Sources */,
+				570B826D1F1376CB006DE204 /* error_code.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
